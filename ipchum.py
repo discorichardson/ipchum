@@ -13,10 +13,16 @@ def ping(addr):
     #if os.system("ping -n 1 " + addr)==0:
     #   return True
     #return False
+
+    if os.name=='nt':
+        count_option = '-n'
+    else:
+        count_option = '-c'
+
     with open(os.devnull, 'w') as DEVNULL:
         try:
             subprocess.check_call(
-                ['ping', '-n', '1', addr],
+                ['ping', count_option, '1', addr],
                 stdout=DEVNULL,  # suppress output
                 stderr=DEVNULL
             )
@@ -26,7 +32,7 @@ def ping(addr):
     return False
 
 def pingping(addr, c, t, error):
-    fail = False
+    fails = 0
     for p in range(0,c):
         time.sleep(t)
         myprint(' [ ]\b\b')
@@ -34,20 +40,22 @@ def pingping(addr, c, t, error):
             myprint('.]')
         else:
             myprint('X]')
-            fail = True
+            fails += 1
 
-    if fail:
+    if fails == c:
         myprint('\n****** FAIL : ' + error + '')
+    elif fails > 0:
+        myprint('\n****** FAIL : Intermittent : ' + error + '')
 
     myprint('\n')
 
-    if fail:
+    if fails > 0:
         return 1
     return 0
 
 def myprint(s):
     sys.stdout.write(s)
-    sys.stdout.flush
+    sys.stdout.flush()
 
 parser = argparse.ArgumentParser(description='Test network connection.')
 parser.add_argument('dest', nargs='?', help='an optional destination for final ping.')
