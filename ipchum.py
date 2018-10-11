@@ -77,10 +77,10 @@ except:
     myprint('\n****** FAIL : Unable to get local hostname.')
     result+=1
 
-# See https://stackoverflow.com/questions/11735821/python-get-localhost-ip for source may need to look at this RE non windows
 try:
-    # confirmed, this fails on non windows....
-    localip = socket.gethostbyname(socket.gethostname())
+    # See https://stackoverflow.com/questions/11735821/python-get-localhost-ip
+    # Windows only localip = socket.gethostbyname(socket.gethostname())
+    localip = netifaces.ifaddresses('wlp8s0').get(netifaces.AF_INET)[0]['addr']
     myprint('.')
 except:
     localip = None
