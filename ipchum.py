@@ -79,6 +79,7 @@ except:
 
 # See https://stackoverflow.com/questions/11735821/python-get-localhost-ip for source may need to look at this RE non windows
 try:
+    # confirmed, this fails on non windows....
     localip = socket.gethostbyname(socket.gethostname())
     myprint('.')
 except:
