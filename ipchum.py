@@ -5,31 +5,15 @@ import netifaces
 import sys
 import argparse
 import time
+from multiping import MultiPing
 
 def ping(addr):
-    # on linux -c rather than -n
-    #subprocess.run("ping -n 1 " + addr, stderr=subprocess.PIPE, stdout=subprocess.PIPE).communicate()[0] == 0:
-    #if subprocess.Popen("ping -n 1 " + addr).communicate()[0] == 0:
-    #if os.system("ping -n 1 " + addr)==0:
-    #   return True
-    #return False
-
-    if os.name=='nt':
-        count_option = '-n'
-    else:
-        count_option = '-c'
-
-    with open(os.devnull, 'w') as DEVNULL:
-        try:
-            subprocess.check_call(
-                ['ping', count_option, '1', addr],
-                stdout=DEVNULL,  # suppress output
-                stderr=DEVNULL
-            )
-            return True
-        except subprocess.CalledProcessError:
-            return False
-    return False
+    mp = MultiPing([addr])
+    mp.send()
+    responses, no_responses = mp.receive(1)
+    if no_responses:
+        return False
+    return True
 
 def pingping(addr, c, t, error):
     fails = 0
@@ -80,7 +64,8 @@ except:
 try:
     # See https://stackoverflow.com/questions/11735821/python-get-localhost-ip
     # Windows only localip = socket.gethostbyname(socket.gethostname())
-    localip = netifaces.ifaddresses('wlp8s0').get(netifaces.AF_INET)[0]['addr']
+    # localip = netifaces.ifaddresses('wlp8s0'z).get(netifaces.AF_INET)[0]['addr']
+    localip = '192.168.1.60'
     myprint('.')
 except:
     localip = None
