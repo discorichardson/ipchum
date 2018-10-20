@@ -1,5 +1,3 @@
-import os
-import subprocess
 import socket
 import netifaces
 import sys
