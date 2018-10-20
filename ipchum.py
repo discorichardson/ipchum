@@ -23,7 +23,7 @@ def ping(addr):
 
 def pingping(description, addr, c, t, error):
     fails = 0
-    myprint(description.ljust(12) + ': ')
+    myprint('\n'+description.ljust(12) + ': ')
     myprint(addr.ljust(20))
 
     myprint(' -> ')
@@ -48,8 +48,6 @@ def pingping(description, addr, c, t, error):
     else:
         myprint('\n****** FAIL : Could not get Host Address.')
         fails += 1
-
-    myprint('\n')
 
     if fails > 0:
         return 1
@@ -108,7 +106,7 @@ except:
 if result==0:
     myprint('ok.')
 
-myprint('\nTesting...\n')
+myprint('\nTesting...')
 
 #myprint('OS          : ' + os.name +'\n')
 
@@ -126,8 +124,6 @@ if gateway != None :
 if args.dest != None :
     for addr in args.dest:
         result+=pingping('Address', addr, args.pings, args.time, 'Unable to ping supplied destination address.')
-
-myprint('\n')
 
 if args.wait=='WAIT':
     raw_input('Press Enter')
