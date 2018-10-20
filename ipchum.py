@@ -80,6 +80,7 @@ except:
     result+=1
 
 try:
+    # TODO decide what to do if more than one interface...
     # See https://stackoverflow.com/questions/11735821/python-get-localhost-ip
     # Windows only localip = socket.gethostbyname(socket.gethostname())
     localip = netifaces.ifaddresses('enp2s0').get(netifaces.AF_INET)[0]['addr']
