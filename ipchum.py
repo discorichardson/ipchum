@@ -26,9 +26,9 @@ def pingping(description, addr, c, t, error):
     myprint(description.ljust(12) + ': ')
     myprint(addr.ljust(20))
 
+    myprint(' -> ')
     addr = getHostAddress(addr)
     if addr!=None:
-        myprint(' -> ')
         myprint(addr.ljust(20))
 
         for p in range(0,c):
@@ -83,7 +83,8 @@ try:
     # TODO decide what to do if more than one interface...
     # See https://stackoverflow.com/questions/11735821/python-get-localhost-ip
     # Windows only localip = socket.gethostbyname(socket.gethostname())
-    localip = netifaces.ifaddresses('enp2s0').get(netifaces.AF_INET)[0]['addr']
+    # localip = netifaces.ifaddresses('enp2s0').get(netifaces.AF_INET)[0]['addr']
+    localip = netifaces.ifaddresses(netifaces.gateways()['default'][netifaces.AF_INET][1]).get(netifaces.AF_INET)[0]['addr']
     myprint('.')
 except:
     localip = None
@@ -95,9 +96,9 @@ if localip=='127.0.0.1':
     result+=1
 
 # See https://pypi.org/project/netifaces/ for netifaces documentation
-# SMELL My code needs to be a bit better here I think
 try:
     gateway = netifaces.gateways()['default'][netifaces.AF_INET][0]
+    # myprint(netifaces.gateways()['default'][netifaces.AF_INET][1])
     myprint('.')
 except:
     gateway = None
