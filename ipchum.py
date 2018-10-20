@@ -62,7 +62,7 @@ def myprint(s):
     sys.stdout.flush()
 
 parser = argparse.ArgumentParser(description='Test network connection.')
-parser.add_argument('dest', nargs='?', help='an optional destination for final ping.')
+parser.add_argument('dest', nargs='*', help='an optional destinations to test.')
 parser.add_argument('-p', '--pings', default=3, type=int, help='Number of pings to each destination.')
 parser.add_argument('-t', '--time', default=.1, type=float, help='Time in seconds between each ping.')
 parser.add_argument('-w', '--wait', dest='wait', action='store_const', const='WAIT', default='', help='Wait for user to press a key when finished.')
@@ -121,7 +121,8 @@ if gateway != None :
     result+=pingping('Gateway', gateway, args.pings, args.time, 'Unable to ping default gateway.')
 
 if args.dest != None :
-    result+=pingping('Address', args.dest, args.pings, args.time, 'Unable to ping supplied destination address.')
+    for addr in args.dest:
+        result+=pingping('Address', addr, args.pings, args.time, 'Unable to ping supplied destination address.')
 
 myprint('\n')
 
