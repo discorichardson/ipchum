@@ -21,13 +21,13 @@ def ping(addr):
 
     return False
 
-def pingping(description, addr, c, t, error):
+def pingping(description, host, c, t, error):
     fails = 0
     myprint('\n'+description.ljust(12) + ': ')
-    myprint(addr.ljust(20))
+    myprint(host.ljust(20))
 
     myprint(' -> ')
-    addr = getHostAddress(addr)
+    addr = getHostAddress(host)
     if addr!=None:
         myprint(addr.ljust(20))
 
@@ -46,7 +46,7 @@ def pingping(description, addr, c, t, error):
             myprint('\n****** FAIL : Intermittent : ' + error + '')
 
     else:
-        myprint('\n****** FAIL : Could not get Host Address.')
+        myprint('\n****** FAIL : Could not get address for host ' + host + '.')
         fails += 1
 
     if fails > 0:
