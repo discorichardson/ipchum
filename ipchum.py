@@ -7,6 +7,12 @@ import argparse
 import time
 from multiping import MultiPing
 
+def getHostAddress(hostname):
+    try:
+        return socket.gethostbyname(hostname)
+    except socket.gaierror:
+        return None
+
 def ping(addr):
     mp = MultiPing([addr], ignore_lookup_errors = True)
     mp.send()
@@ -17,21 +23,33 @@ def ping(addr):
 
     return False
 
-def pingping(addr, c, t, error):
+def pingping(description, addr, c, t, error):
     fails = 0
-    for p in range(0,c):
-        time.sleep(t)
-        myprint(' [ ]\b\b')
-        if ping(addr):
-            myprint('.]')
-        else:
-            myprint('X]')
-            fails += 1
+    myprint(description.ljust(12) + ': ')
+    myprint(addr.ljust(20))
 
-    if fails == c:
-        myprint('\n****** FAIL : ' + error + '')
-    elif fails > 0:
-        myprint('\n****** FAIL : Intermittent : ' + error + '')
+    addr = getHostAddress(addr)
+    if addr!=None:
+        myprint(' -> ')
+        myprint(addr.ljust(20))
+
+        for p in range(0,c):
+            time.sleep(t)
+            myprint(' [ ]\b\b')
+            if ping(addr):
+                myprint('.]')
+            else:
+                myprint('X]')
+                fails += 1
+
+        if fails == c:
+            myprint('\n****** FAIL : ' + error + '')
+        elif fails > 0:
+            myprint('\n****** FAIL : Intermittent : ' + error + '')
+
+    else:
+        myprint('\n****** FAIL : Could not get Host Address.')
+        fails += 1
 
     myprint('\n')
 
@@ -56,10 +74,10 @@ result = 0
 myprint('Discovery')
 
 try:
-    hostname = socket.gethostname()
+    localhostname = socket.gethostname()
     myprint('.')
 except:
-    hostname = None
+    localhostname = None
     myprint('\n****** FAIL : Unable to get local hostname.')
     result+=1
 
@@ -91,24 +109,19 @@ myprint('\n')
 
 #myprint('OS          : ' + os.name +'\n')
 
-myprint('Loopback    : 127.0.0.1'.ljust(40))
-result+=pingping('127.0.0.1', args.pings, args.time, 'Unable to ping loop back address, is network available?')
+result+=pingping('Loop back', '127.0.0.1', args.pings, args.time, 'Unable to ping loop back address, is network available?')
 
 if localip != None :
-    myprint(('Local IP    : ' + localip).ljust(40))
-    result+=pingping(localip,args.pings, args.time, 'Unable to ping local ip address, is network configured, is DHCP working?')
+    result+=pingping('Local IP',localip,args.pings, args.time, 'Unable to ping local ip address, is network configured, is DHCP working?')
 
-if hostname != None :
-    myprint(('Hostname    : ' + hostname).ljust(40))
-    result+=pingping(hostname, args.pings, args.time, 'Unable to ping local hostname, is this assigned?')
+if localhostname != None :
+    result+=pingping('Hostname', localhostname, args.pings, args.time, 'Unable to ping local hostname, is this assigned?')
 
 if gateway != None :
-    myprint(('Gateway     : ' + gateway).ljust(40))
-    result+=pingping(gateway, args.pings, args.time, 'Unable to ping default gateway.')
+    result+=pingping('Gateway', gateway, args.pings, args.time, 'Unable to ping default gateway.')
 
 if args.dest != None :
-    myprint(('Address     : ' + args.dest).ljust(40))
-    result+=pingping(args.dest, args.pings, args.time, 'Unable to ping supplied destination address.')
+    result+=pingping('Address', args.dest, args.pings, args.time, 'Unable to ping supplied destination address.')
 
 myprint('\n')
 
