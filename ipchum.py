@@ -105,7 +105,10 @@ except:
     myprint('\n****** FAIL : Unable to get default gateway.')
     result+=1
 
-myprint('\n')
+if result==0:
+    myprint('ok.')
+
+myprint('\nTesting...\n')
 
 #myprint('OS          : ' + os.name +'\n')
 
