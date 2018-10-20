@@ -59,13 +59,25 @@ def myprint(s):
 
 parser = argparse.ArgumentParser(description='Test network connection.')
 parser.add_argument('dest', nargs='*', help='an optional destinations to test.')
-parser.add_argument('-p', '--pings', default=3, type=int, help='Number of pings to each destination.')
-parser.add_argument('-t', '--time', default=.2, type=float, help='Time in seconds between each ping.')
+parser.add_argument('-p', '--pings', default=3, type=int, help='Number of pings to each destination. Default:3, minimum:1, maximum 20.')
+parser.add_argument('-t', '--time', default=.2, type=float, help='Time in seconds between each ping, Default:0.2, minimum:0.2, maximum:60.')
 parser.add_argument('-w', '--wait', dest='wait', action='store_const', const='WAIT', default='', help='Wait for user to press a key when finished.')
 
 args = parser.parse_args()
 
 result = 0
+
+pings = args.pings
+if pings < 1:
+    pings=1
+if pings > 20:
+    pings=20
+
+gap = args.time
+if gap < 0.2:
+    gap=0.2
+if gap > 60:
+    gap=60
 
 myprint('Discovery')
 
@@ -110,20 +122,22 @@ myprint('\nTesting...')
 
 #myprint('OS          : ' + os.name +'\n')
 
-result+=pingping('Loop back', '127.0.0.1', args.pings, args.time, 'Unable to ping loop back address, is network available?')
+result+=pingping('Loop back', '127.0.0.1', pings, gap, 'Unable to ping loop back address, is network available?')
 
 if localip != None :
-    result+=pingping('Local IP',localip,args.pings, args.time, 'Unable to ping local ip address, is network configured, is DHCP working?')
+    result+=pingping('Local IP',localip, pings, gap, 'Unable to ping local ip address, is network configured, is DHCP working?')
 
 if localhostname != None :
-    result+=pingping('Hostname', localhostname, args.pings, args.time, 'Unable to ping local hostname, is this assigned?')
+    result+=pingping('Hostname', localhostname, pings, gap, 'Unable to ping local hostname, is this assigned?')
 
 if gateway != None :
-    result+=pingping('Gateway', gateway, args.pings, args.time, 'Unable to ping default gateway.')
+    result+=pingping('Gateway', gateway, pings, gap, 'Unable to ping default gateway.')
 
 if args.dest != None :
     for addr in args.dest:
-        result+=pingping('Address', addr, args.pings, args.time, 'Unable to ping supplied destination address.')
+        result+=pingping('Address', addr, pings, gap, 'Unable to ping ' + addr + '.')
+
+myprint('\n')
 
 if args.wait=='WAIT':
     raw_input('Press Enter')
