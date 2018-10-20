@@ -8,12 +8,14 @@ import time
 from multiping import MultiPing
 
 def ping(addr):
-    mp = MultiPing([addr])
+    mp = MultiPing([addr], ignore_lookup_errors = True)
     mp.send()
     responses, no_responses = mp.receive(1)
-    if no_responses:
-        return False
-    return True
+    for resaddr, rtt in responses.items():
+        if resaddr==addr:
+            return True
+
+    return False
 
 def pingping(addr, c, t, error):
     fails = 0
@@ -64,8 +66,7 @@ except:
 try:
     # See https://stackoverflow.com/questions/11735821/python-get-localhost-ip
     # Windows only localip = socket.gethostbyname(socket.gethostname())
-    # localip = netifaces.ifaddresses('wlp8s0'z).get(netifaces.AF_INET)[0]['addr']
-    localip = '192.168.1.60'
+    localip = netifaces.ifaddresses('enp2s0').get(netifaces.AF_INET)[0]['addr']
     myprint('.')
 except:
     localip = None
