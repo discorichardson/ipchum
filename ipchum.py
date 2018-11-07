@@ -90,7 +90,9 @@ try:
         if localip.startswith('127'):
             localip = getHostAddress(localhostname + '.local')
             if localip != None:
-                if not localip.startswith('127'):
+                if localip.startswith('127'):
+                    localip = None
+                else:
                     localhostname += '.local'
 
     myprint('.')
@@ -112,8 +114,8 @@ if localip == None:
         myprint('\n****** FAIL : Unable to get local ip address.')
         result+=1
 
-if localip=='127.0.0.1':
-    myprint('\n****** FAIL : IP address is 127.0.0.1, is network connected?')
+if localip.startswith('127'):
+    myprint('\n****** FAIL : IP address is ' + localip + ', is network connected?')
     result+=1
 
 # See https://pypi.org/project/netifaces/ for netifaces documentation
