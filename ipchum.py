@@ -98,6 +98,7 @@ try:
     myprint('.')
 except:
     localhostname = None
+    localip = None
     myprint('\n****** FAIL : Unable to get local hostname.')
     result+=1
 
