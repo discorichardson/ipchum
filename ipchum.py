@@ -83,23 +83,34 @@ myprint('Discovery')
 
 try:
     localhostname = socket.gethostname()
+
+    localip = getHostAddress(localhostname)
+
+    if localip != None:
+        if localip.startswith('127'):
+            localip = getHostAddress(localhostname + '.local')
+            if localip != None:
+                if not localip.startswith('127'):
+                    localhostname += '.local'
+
     myprint('.')
 except:
     localhostname = None
     myprint('\n****** FAIL : Unable to get local hostname.')
     result+=1
 
-try:
-    # TODO decide what to do if more than one interface...
-    # See https://stackoverflow.com/questions/11735821/python-get-localhost-ip
-    # Windows only localip = socket.gethostbyname(socket.gethostname())
-    # localip = netifaces.ifaddresses('enp2s0').get(netifaces.AF_INET)[0]['addr']
-    localip = netifaces.ifaddresses(netifaces.gateways()['default'][netifaces.AF_INET][1]).get(netifaces.AF_INET)[0]['addr']
-    myprint('.')
-except:
-    localip = None
-    myprint('\n****** FAIL : Unable to get local ip address.')
-    result+=1
+if localip == None:
+    try:
+        # TODO decide what to do if more than one interface...
+        # See https://stackoverflow.com/questions/11735821/python-get-localhost-ip
+        # Windows only localip = socket.gethostbyname(socket.gethostname())
+        # localip = netifaces.ifaddresses('enp2s0').get(netifaces.AF_INET)[0]['addr']
+        localip = netifaces.ifaddresses(netifaces.gateways()['default'][netifaces.AF_INET][1]).get(netifaces.AF_INET)[0]['addr']
+        myprint('.')
+    except:
+        localip = None
+        myprint('\n****** FAIL : Unable to get local ip address.')
+        result+=1
 
 if localip=='127.0.0.1':
     myprint('\n****** FAIL : IP address is 127.0.0.1, is network connected?')
