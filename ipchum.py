@@ -138,16 +138,16 @@ myprint('\nTesting...')
 
 #myprint('OS          : ' + os.name +'\n')
 
-result+=pingping('Loop back', '127.0.0.1', pings, gap, 'Unable to ping loop back address, is network available?')
+result+=pingping('Loop back', '127.0.0.1', pings, gap, 'Unable to ping loop back address.')
 
 if localip != None :
-    result+=pingping('Local IP',localip, pings, gap, 'Unable to ping local ip address, is network configured, is DHCP working?')
+    result+=pingping('Local IP',localip, pings, gap, 'Unable to ping local ip address.')
 
 if localhostname != None :
     if localip != getHostAddress(localhostname):
-        result+=pingping('Hostname', localhostname, pings, gap, 'Unable to ping local hostname, is this assigned?')
+        result+=pingping('Hostname', localhostname, pings, gap, 'Unable to ping local hostname.')
     else:
-        result+=pingping('Hostname', localhostname, 0, gap, 'Unable to ping local hostname, is this assigned?')
+        result+=pingping('Hostname', localhostname, 0, gap, 'Unable to ping local hostname.')
 
 if gateway != None :
     result+=pingping('Gateway', gateway, pings, gap, 'Unable to ping default gateway.')
