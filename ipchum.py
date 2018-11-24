@@ -40,10 +40,11 @@ def pingping(description, host, c, t, error):
                 myprint('X]')
                 fails += 1
 
-        if fails == c:
-            myprint('\n****** FAIL : ' + error + '')
-        elif fails > 0:
-            myprint('\n****** FAIL : Intermittent : ' + error + '')
+        if fails > 0:
+            if fails == c:
+                myprint('\n****** FAIL : ' + error + '')
+            else:
+                myprint('\n****** FAIL : Intermittent : ' + error + '')
 
     else:
         myprint('\n****** FAIL : Could not get address for host ' + host + '.')
@@ -105,6 +106,7 @@ except:
 if localip == None:
     try:
         # TODO decide what to do if more than one interface...
+        # Aouto behaviour, try all interfaces, have param to select, or list
         # See https://stackoverflow.com/questions/11735821/python-get-localhost-ip
         # Windows only localip = socket.gethostbyname(socket.gethostname())
         # localip = netifaces.ifaddresses('enp2s0').get(netifaces.AF_INET)[0]['addr']
@@ -142,7 +144,10 @@ if localip != None :
     result+=pingping('Local IP',localip, pings, gap, 'Unable to ping local ip address, is network configured, is DHCP working?')
 
 if localhostname != None :
-    result+=pingping('Hostname', localhostname, pings, gap, 'Unable to ping local hostname, is this assigned?')
+    if localip != getHostAddress(localhostname):
+        result+=pingping('Hostname', localhostname, pings, gap, 'Unable to ping local hostname, is this assigned?')
+    else:
+        result+=pingping('Hostname', localhostname, 0, gap, 'Unable to ping local hostname, is this assigned?')
 
 if gateway != None :
     result+=pingping('Gateway', gateway, pings, gap, 'Unable to ping default gateway.')
